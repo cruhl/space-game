@@ -1,0 +1,10 @@
+{
+  "name": "game",
+  "private": true,
+  "scripts": {
+    "dev": "parcel public/index.html"
+  },
+  "devDependencies": {
+    "sass": "^1.14.3"
+  }
+}
