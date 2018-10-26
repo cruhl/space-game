@@ -1,20 +1,39 @@
 import * as Vector from "./Vector";
+import * as Angle from "./Angle";
 
 export interface Physics {
-  position: Vector.Vector;
-  velocity: Vector.Vector;
+  angle: {
+    value: Angle.Angle;
+    velocity: Angle.Angle;
+    acceleration: Angle.Angle;
+  };
+  position: {
+    value: Vector.Vector;
+    velocity: Vector.Vector;
+    acceleration: Vector.Vector;
+  };
 }
 
 export const init = (): Physics => ({
-  position: Vector.init(),
-  velocity: Vector.init()
-});
-
-export const step = (dt: number, { position, velocity }: Physics): Physics => ({
-  velocity,
+  angle: {
+    value: Angle.init(),
+    velocity: Angle.init(),
+    acceleration: Angle.init()
+  },
   position: {
-    angle: position.angle + velocity.angle,
-    x: position.x + velocity.x,
-    y: position.y + velocity.y
+    value: Vector.init(),
+    velocity: Vector.init(),
+    acceleration: Vector.init()
   }
 });
+
+export const step = (dt: number, { angle, position }: Physics) => {
+  angle.velocity = angle.velocity + angle.acceleration;
+  angle.value = angle.value + angle.velocity;
+
+  position.velocity.x = position.velocity.x + position.acceleration.x;
+  position.velocity.y = position.velocity.y + position.acceleration.y;
+
+  position.value.x = position.value.x + position.velocity.x;
+  position.value.y = position.value.y + position.velocity.y;
+};
