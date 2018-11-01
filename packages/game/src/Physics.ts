@@ -1,16 +1,20 @@
 import * as Vector from "./Vector";
 import * as Angle from "./Angle";
 
+export type Meter = number;
+export type TonsTnt = number;
+export type DegreesCelsius = number;
+
 export interface Physics {
   angle: {
-    value: Angle.Angle;
-    velocity: Angle.Angle;
-    acceleration: Angle.Angle;
+    value: Angle.Radians;
+    velocity: Angle.Radians;
+    acceleration: Angle.Radians;
   };
   position: {
-    value: Vector.Vector;
-    velocity: Vector.Vector;
-    acceleration: Vector.Vector;
+    value: Vector.Vector<Meter, Meter>;
+    velocity: Vector.Vector<Meter, Meter>;
+    acceleration: Vector.Vector<Meter, Meter>;
   };
 }
 

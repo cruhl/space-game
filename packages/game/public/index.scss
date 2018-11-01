@@ -11,6 +11,7 @@ html {
   position: relative;
 
   .block {
+    transition: background 2s ease-out;
     position: absolute;
     background: white;
   }
@@ -18,11 +19,11 @@ html {
 
 .particle {
   position: absolute;
+  transform: translate(-50%, -50%);
 
   &.dummy {
     height: 5px;
     width: 5px;
-    transform: translate(-50%, -50%);
     background: red;
   }
 }

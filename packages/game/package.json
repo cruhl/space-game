@@ -5,7 +5,8 @@
     "dev": "parcel public/index.html"
   },
   "devDependencies": {
-    "sass": "^1.14.3"
+    "sass": "^1.14.3",
+    "tslint-react": "^3.6.0"
   },
   "dependencies": {
     "fp-ts": "^1.10.0"

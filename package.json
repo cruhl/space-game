@@ -5,7 +5,10 @@
     "tst:init": "tst init --install false",
     "tst:scripts": "tst scripts",
     "tst:deps": "tst deps",
-    "game:dev": "lerna run dev --stream --scope game"
+    "game:test": "tst test game",
+    "game:test:watch": "tst test game --watch",
+    "game:dev": "lerna run dev --stream --scope game",
+    "game:build": "tst build game"
   },
   "devDependencies": {
     "@types/jest": "^23.3.5",

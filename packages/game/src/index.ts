@@ -2,14 +2,19 @@ import * as State from "./State";
 import * as Keyboard from "./Keyboard";
 import * as Ship from "./Ship";
 
-let state = State.init();
+let state = State.init(new Date().getTime());
 
-const step = (time: number) => {
-  State.step(time, state);
+const step = (nowMS: number) => {
+  State.step(nowMS, state);
   window.requestAnimationFrame(step);
 };
 
 window.requestAnimationFrame(step);
+
+setInterval(() => {
+  Ship.stepBlocks(state.nowMS - state.lastBlockUpdateMS, state.ship);
+  state.lastBlockUpdateMS = state.nowMS;
+}, 300);
 
 document.addEventListener("keydown", event => {
   Keyboard.down(event.keyCode, state.keyboard);
@@ -28,5 +33,9 @@ document.addEventListener("mousedown", event => {
   state.mouse.x = event.clientX;
   state.mouse.y = event.clientY;
 
-  Ship.explosion(state.mouse, 0.2, 50, state.ship);
+  Ship.explosion({
+    energy: 11,
+    position: state.mouse,
+    ship: state.ship
+  });
 });

@@ -1,11 +1,16 @@
+import * as Material from "../Material";
+import * as Percentage from "../Percentage";
+import * as Physics from "../Physics";
 import * as Vector from "../Vector";
 import * as Ship from "./index";
 
+export type BlockIndex = number;
 export interface Block {
   type: Type;
-  health: number;
-  address: Vector.Vector;
-
+  material: Material.Material;
+  position: Vector.Vector<number, number>;
+  health: Percentage.Percentage;
+  temperature: Physics.DegreesCelsius;
   view: HTMLElement;
 }
 
@@ -14,21 +19,29 @@ export const enum Type {
   Shield = "shield"
 }
 
-export const init = (ship: Ship.Ship, address: Vector.Vector): Block => {
-  const view = document.createElement("div");
-  ship.view.appendChild(view);
-
+export const init = ({
+  position,
+  ship
+}: {
+  position: Vector.Vector<Physics.Meter, Physics.Meter>;
+  ship: {
+    dimensions: Vector.Vector<BlockIndex, BlockIndex>;
+    view: HTMLElement;
+  };
+}): Block => {
+  const view = ship.view.appendChild(document.createElement("div"));
   view.className = "block";
-  view.style.left = `${(100 * address.x) / ship.blocks.dimensions.x}%`;
-  view.style.top = `${(100 * address.y) / ship.blocks.dimensions.y}%`;
-  view.style.width = `${100 / ship.blocks.dimensions.x}%`;
-  view.style.height = `${100 / ship.blocks.dimensions.y}%`;
+  view.style.left = `${Percentage.toNumber(position.x) / ship.dimensions.x}%`;
+  view.style.top = `${Percentage.toNumber(position.y) / ship.dimensions.y}%`;
+  view.style.width = `${Percentage.toNumber(1 / ship.dimensions.x)}%`;
+  view.style.height = `${Percentage.toNumber(1 / ship.dimensions.y)}%`;
 
   return {
     type: Type.Hull,
-    health: 1,
-    address,
-
+    material: Material.steel,
+    position,
+    health: Percentage.fromNumber(100),
+    temperature: 0 as Physics.DegreesCelsius,
     view
   };
 };
@@ -36,14 +49,15 @@ export const init = (ship: Ship.Ship, address: Vector.Vector): Block => {
 export const absolutePosition = (
   ship: Ship.Ship,
   block: Block
-): Vector.Vector => {
-  const blockOffset = ship.blocks.size / 2;
-  const shipWidth = ship.blocks.dimensions.x * ship.blocks.size;
-  const shipHeight = ship.blocks.dimensions.y * ship.blocks.size;
+): Vector.Vector<Physics.Meter, Physics.Meter> => {
+  const blockOffset: Physics.Meter = ship.scale / 2;
+
+  const shipWidth: Physics.Meter = ship.dimensions.x * ship.scale;
+  const shipHeight: Physics.Meter = ship.dimensions.y * ship.scale;
 
   const offsetFromShipOrigin = {
-    x: block.address.x * ship.blocks.size - shipWidth / 2 + blockOffset,
-    y: block.address.y * ship.blocks.size - shipHeight / 2 + blockOffset
+    x: block.position.x * ship.scale - shipWidth / 2 + blockOffset,
+    y: block.position.y * ship.scale - shipHeight / 2 + blockOffset
   };
 
   const angleFromShipOrigin = Math.atan2(
@@ -68,7 +82,36 @@ export const absolutePosition = (
   };
 };
 
-export const damage = (amount: number, block: Block) => {
+export const damage = (amount: Percentage.Percentage, block: Block) => {
   block.health -= amount;
   block.view.style.opacity = `${block.health}`;
+};
+
+export const heat = (
+  temperatureChange: Physics.DegreesCelsius,
+  block: Block
+) => {
+  block.temperature += temperatureChange;
+  if (block.temperature <= -273.15) {
+    block.temperature = -273.15;
+  }
+
+  if (
+    ((block.temperature /
+      block.material.meltingPoint) as Percentage.Percentage) >=
+    Percentage.fromNumber(30)
+  ) {
+    damage(Percentage.fromNumber(0.2), block);
+  }
+
+  const luminosity: Percentage.Percentage =
+    Percentage.fromNumber(100) -
+    Math.min(
+      Percentage.fromNumber(50),
+      block.temperature / block.material.meltingPoint
+    );
+
+  block.view.style.background = `hsl(0, 100%, ${Percentage.toNumber(
+    luminosity
+  )}%)`;
 };
