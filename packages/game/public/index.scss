@@ -58,11 +58,136 @@ html {
 
 .particle {
   position: absolute;
-  transform: translate(-50%, -50%);
+
+  &.shield {
+    top: 50%;
+    left: 20%;
+    width: 500px;
+    height: 500px;
+
+    transform: translate(-50%, -50%) rotate(35deg);
+
+    border-radius: 100%;
+    box-shadow: 0 0 20px 0 hsla(228, 100%, 50%, 0.5),
+      inset 0 0 100px 0 hsla(228, 100%, 50%, 0.5);
+
+    background: radial-gradient(
+      10% 60% at top,
+      hsla(216, 100%, 50%, 0.5) 0%,
+      hsla(253, 100%, 50%, 0.3) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
+
+    animation: shield 150ms ease-in-out infinite, shield 1s ease-in infinite;
+
+    @keyframes shield-pulsate {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes shield-fade {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.projectile {
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 15px;
+
+    &.laser {
+      &.bolt {
+        animation: grow-shrink 30ms infinite linear backwards;
+
+        &.blue {
+          background: radial-gradient(
+            closest-side,
+            hsl(191, 100%, 77%) 0%,
+            rgb(0, 123, 255) 25%,
+            hsla(228, 100%, 50%, 0.7) 50%,
+            hsla(0, 0%, 0%, 0) 100%
+          );
+        }
+
+        &.red {
+          top: 55%;
+          background: radial-gradient(
+            closest-side,
+            hsl(0, 100%, 85%) 0%,
+            rgb(255, 39, 39) 25%,
+            hsla(341, 100%, 50%, 0.5) 50%,
+            hsla(0, 0%, 0%, 0) 100%
+          );
+        }
+
+        &.green {
+          top: 60%;
+          background: radial-gradient(
+            closest-side,
+            hsl(139, 100%, 86%) 0%,
+            rgb(0, 255, 115) 25%,
+            hsla(110, 100%, 50%, 0.5) 50%,
+            hsla(0, 0%, 0%, 0) 100%
+          );
+        }
+
+        &.purple {
+          top: 65%;
+          background: radial-gradient(
+            closest-side,
+            hsl(312, 97%, 86%) 0%,
+            rgb(234, 0, 255) 25%,
+            hsla(272, 100%, 50%, 0.8) 50%,
+            hsla(0, 0%, 0%, 0) 100%
+          );
+        }
+      }
+    }
+  }
 
   &.dummy {
     height: 5px;
     width: 5px;
     background: red;
+  }
+}
+
+@keyframes grow-shrink {
+  0% {
+    transform: scale(0.8);
+  }
+
+  0% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(0.8);
+  }
+}
+
+@keyframes laser-bolt {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(1000px, 0);
   }
 }

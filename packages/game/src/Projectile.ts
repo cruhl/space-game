@@ -4,6 +4,6 @@ export interface Projectile {
   physics: Physics.Physics;
 }
 
-export const init = (config: { physics: Physics.Physics }) => ({
-  physics: config.physics || Physics.init()
+export const init = () => ({
+  physics: Physics.init()
 });
