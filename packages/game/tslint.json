@@ -1,6 +1,6 @@
 {
   "extends": ["../../tslint.json", "tslint-react"],
   "rules": {
-    "curly": [true, "one-line"]
+    "curly": [true, "as-needed"]
   }
 }

@@ -1,8 +1,8 @@
-import * as State from "./State";
 import * as Keyboard from "./Keyboard";
 import * as Ship from "./Ship";
+import * as State from "./State";
 
-let state = State.init(new Date().getTime());
+const state = State.init(new Date().getTime());
 
 const step = (nowMS: number) => {
   State.step(nowMS, state);
@@ -32,10 +32,5 @@ document.addEventListener("mousemove", event => {
 document.addEventListener("mousedown", event => {
   state.mouse.x = event.clientX;
   state.mouse.y = event.clientY;
-
-  Ship.explosion({
-    energy: 11,
-    position: state.mouse,
-    ship: state.ship
-  });
+  Ship.explosion(Math.pow(Math.random(), 10) * 10 + 2, state.mouse, state.ship);
 });

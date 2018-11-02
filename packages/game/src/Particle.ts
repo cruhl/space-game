@@ -14,7 +14,7 @@ export const enum Type {
   Dummy = "dummy"
 }
 
-export const explosion = (settings: {
+export const explosion = (config: {
   count: number;
   minDuration: Time.Time;
   maxDuration: Time.Time;
@@ -25,40 +25,39 @@ export const explosion = (settings: {
   colorStops: string[];
   position: Vector.Vector<Physics.Meter, Physics.Meter>;
 }) => {
-  for (let i = 0; i < Math.max(1, settings.count); i++) {
-    light({
-      radius: randomBetween(
-        settings.minParticleRadius,
-        settings.maxParticleRadius
-      ),
-      colorStops: settings.colorStops,
-      particle: {
+  for (let i = 0; i < Math.max(1, config.count); i++)
+    light(
+      randomBetween(
+        config.minParticleRadius,
+        config.maxParticleRadius
+      ) as Physics.Meter,
+      {
         type: Type.Dummy,
-        duration: randomBetween(settings.minDuration, settings.maxDuration),
+        duration: randomBetween(config.minDuration, config.maxDuration),
         physics: {
           ...Physics.init(),
           position: {
-            value: settings.position,
+            value: config.position,
             velocity: Vector.fromPolar(
               Angle.fromDegrees(360 * Math.random()),
-              randomBetween(settings.minRadius, settings.maxRadius)
+              randomBetween(config.minRadius, config.maxRadius)
             ),
             acceleration: Vector.init()
           }
         }
-      }
-    });
-  }
+      },
+      config.colorStops
+    );
 };
 
-export const light = (settings: {
-  radius: Physics.Meter;
-  colorStops: string[];
-  particle: Particle;
-}) => {
-  const view = init({ ...settings.particle, type: Type.Light });
-  view.style.width = view.style.height = `${settings.radius / 2}px`;
-  view.style.background = `radial-gradient(closest-side, ${settings.colorStops.join(
+export const light = (
+  radius: Physics.Meter,
+  particle: Particle,
+  colorStops: string[]
+) => {
+  const view = init({ ...particle, type: Type.Light });
+  view.style.width = view.style.height = `${radius / 2}px`;
+  view.style.background = `radial-gradient(closest-side, ${colorStops.join(
     ", "
   )})`;
 };
@@ -71,19 +70,21 @@ export const init = (particle: Particle): HTMLElement => {
   view.style.left = `${particle.physics.position.value.x}px`;
   view.style.top = `${particle.physics.position.value.y}px`;
 
+  const shiftCenter = "translate(-50%, -50%)";
+  const rotation = (360 * Math.random()) as Angle.Degrees;
+
   // `any` or it complains we don't include *all possible* CSS properties
-  // const shiftS
   const keyframes: any = [
     {
       offset: 0,
       opacity: 1,
-      transform: "translate(-50%, -50%) scale(0)"
+      transform: `${shiftCenter} rotate(${rotation}deg) scale(0, 0)`
     },
 
     {
       offset: 0.05,
       opacity: 1,
-      transform: "translate(-50%, -50%) scale(1)"
+      transform: `${shiftCenter} rotate(${rotation + 90}deg) scale(1, 1.1)`
     },
 
     { offset: 0.15, opacity: 0.8 },
@@ -100,12 +101,15 @@ export const init = (particle: Particle): HTMLElement => {
       offset: 1,
       opacity: 0,
       transform: `
-        translate(-50%, -50%)
+        ${shiftCenter}
+        rotate(${rotation + 180}deg)
+
         translate(
           ${particle.physics.position.velocity.x}px,
           ${particle.physics.position.velocity.y}px
         )
-        scale(0.5)`
+
+        scale(0.5, 0.4)`
     }
   ];
 
@@ -114,7 +118,7 @@ export const init = (particle: Particle): HTMLElement => {
     fill: "forwards"
   });
 
-  // setInterval(() => view.remove(), particle.duration);
+  setInterval(() => view.remove(), particle.duration);
   return view;
 };
 

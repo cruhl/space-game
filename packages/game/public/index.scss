@@ -3,7 +3,9 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: black;
+
+  background-image: url("../public/images/background.png");
+
   font-family: "IBM Plex Sans", sans-serif;
 }
 
@@ -11,9 +13,46 @@ html {
   position: relative;
 
   .block {
-    transition: background 2s ease-out;
     position: absolute;
-    background: white;
+
+    image-rendering: pixelated;
+    background-image: url("../public/images/ship-sprite.png");
+    background-size: 400%;
+    background-position-x: 100%;
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      &.heat {
+      }
+
+      &.damage {
+      }
+    }
+
+    &::after {
+      content: "";
+
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      image-rendering: pixelated;
+      background-image: url("../public/images/ship-sprite.png");
+      background-size: 400%;
+    }
+
+    &.destroyed {
+      &::after {
+        opacity: 0;
+      }
+    }
   }
 }
 

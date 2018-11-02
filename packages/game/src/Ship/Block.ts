@@ -84,7 +84,11 @@ export const absolutePosition = (
 
 export const damage = (amount: Percentage.Percentage, block: Block) => {
   block.health -= amount;
-  block.view.style.opacity = `${block.health}`;
+
+  // (block.view.children[0] as HTMLElement).style.opacity = `${block.health}`;
+
+  if (block.health < Percentage.fromNumber(25))
+    block.view.classList.add("destroyed");
 };
 
 export const heat = (
@@ -92,26 +96,23 @@ export const heat = (
   block: Block
 ) => {
   block.temperature += temperatureChange;
-  if (block.temperature <= -273.15) {
-    block.temperature = -273.15;
-  }
+  if (block.temperature <= -273.15) block.temperature = -273.15;
 
   if (
     ((block.temperature /
       block.material.meltingPoint) as Percentage.Percentage) >=
     Percentage.fromNumber(30)
-  ) {
-    damage(Percentage.fromNumber(0.2), block);
-  }
+  )
+    damage(Percentage.fromNumber(0.05), block);
 
-  const luminosity: Percentage.Percentage =
-    Percentage.fromNumber(100) -
-    Math.min(
-      Percentage.fromNumber(50),
-      block.temperature / block.material.meltingPoint
-    );
+  // const luminosity: Percentage.Percentage =
+  //   Percentage.fromNumber(100) -
+  //   Math.min(
+  //     Percentage.fromNumber(50),
+  //     block.temperature / block.material.meltingPoint
+  //   );
 
-  block.view.style.background = `hsl(0, 100%, ${Percentage.toNumber(
-    luminosity
-  )}%)`;
+  // block.view.style.background = `hsl(0, 100%, ${Percentage.toNumber(
+  //   luminosity
+  // )}%)`;
 };
