@@ -7,7 +7,7 @@ import * as Particle from "../Particle";
 import * as Time from "../Time";
 
 export const explosion = (
-  energy: Physics.TonsTnt,
+  energy: Physics.TonsTNT,
   position: Vector.Vector<Physics.Meter, Physics.Meter>,
   ship: Ship.Ship
 ) => {
@@ -24,20 +24,20 @@ export const explosion = (
 
     const percentageOfRadius = (radius - distance) / radius;
 
-    // Block.heat(maxTemperature * Math.pow(percentageOfRadius, 3), block);
+    Block.heat(maxTemperature * Math.pow(percentageOfRadius * 1.2, 3), block);
     Block.damage(2 * energy * Math.pow(percentageOfRadius, 6), block);
   }
 
   // Particle effects
-  smoke(position, energy);
-  debris(position, energy);
-  gases(position, energy);
-  flash(position, energy);
+  true && smoke(position, energy);
+  true && debris(position, energy);
+  true && gases(position, energy);
+  true && flash(position, energy);
 };
 
 const smoke = (
   position: Vector.Vector<Physics.Meter, Physics.Meter>,
-  energy: Physics.TonsTnt
+  energy: Physics.TonsTNT
 ) =>
   Particle.explosion({
     position,
@@ -52,13 +52,13 @@ const smoke = (
       `hsla(0, 0%, 25%, 0.9) 0%`,
       `hsla(0, 0%, 20%, 0.9) 25%`,
       `hsla(0, 0%, 15%, 0.7) 55%`,
-      `hsla(0, 0%, 0%, 0) 100%`
-    ]
+      `hsla(0, 0%, 0%, 0) 100%`,
+    ],
   });
 
 const debris = (
   position: Vector.Vector<Physics.Meter, Physics.Meter>,
-  energy: Physics.TonsTnt
+  energy: Physics.TonsTNT
 ) =>
   Particle.explosion({
     position,
@@ -74,13 +74,13 @@ const debris = (
       `hsla(40, 100%, 50%, 1) 10%`,
       `hsla(20, 100%, 50%, 0.5) 15%`,
       `hsla(0, 100%, 50%, 0.2) 50%`,
-      `hsla(0, 0%, 0%, 0) 100%`
-    ]
+      `hsla(0, 0%, 0%, 0) 100%`,
+    ],
   });
 
 const gases = (
   position: Vector.Vector<Physics.Meter, Physics.Meter>,
-  energy: Physics.TonsTnt
+  energy: Physics.TonsTNT
 ) =>
   Particle.explosion({
     position,
@@ -96,13 +96,13 @@ const gases = (
       `hsla(20, 100%, 50%, 0.9) 35%`,
       `hsla(10, 100%, 50%, 0.4) 55%`,
       `hsla(0, 100%, 50%, 0.2) 75%`,
-      `hsla(0, 0%, 0%, 0) 100%`
-    ]
+      `hsla(0, 0%, 0%, 0) 100%`,
+    ],
   });
 
 const flash = (
   position: Vector.Vector<Physics.Meter, Physics.Meter>,
-  energy: Physics.TonsTnt
+  energy: Physics.TonsTNT
 ) =>
   Particle.light(
     (energy * 85) as Physics.Meter,
@@ -111,15 +111,15 @@ const flash = (
       duration: 400 * Time.millisecond,
       physics: Physics.init({
         position: {
-          value: position
-        }
-      })
+          value: position,
+        },
+      }),
     },
     [
       `hsla(50, 100%, 100%, 1) 0%`,
       `hsla(45, 100%, 75%, 1) 40%`,
       `hsla(35, 100%, 50%, 0.9) 65%`,
       `hsla(0, 100%, 50%, 0.3) 90%`,
-      `hsla(0, 0%, 0%, 0) 100%`
+      `hsla(0, 0%, 0%, 0) 100%`,
     ]
   );

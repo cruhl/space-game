@@ -11,17 +11,22 @@ export interface Block {
   position: Vector.Vector<number, number>;
   health: Percentage.Percentage;
   temperature: Physics.DegreesCelsius;
-  view: HTMLElement;
+  view: {
+    container: HTMLElement;
+    heat: HTMLElement;
+    damage: HTMLElement;
+    main: HTMLElement;
+  };
 }
 
 export const enum Type {
   Hull = "hull",
-  Shield = "shield"
+  Shield = "shield",
 }
 
 export const init = ({
   position,
-  ship
+  ship,
 }: {
   position: Vector.Vector<Physics.Meter, Physics.Meter>;
   ship: {
@@ -29,12 +34,27 @@ export const init = ({
     view: HTMLElement;
   };
 }): Block => {
-  const view = ship.view.appendChild(document.createElement("div"));
-  view.className = "block";
-  view.style.left = `${Percentage.toNumber(position.x) / ship.dimensions.x}%`;
-  view.style.top = `${Percentage.toNumber(position.y) / ship.dimensions.y}%`;
-  view.style.width = `${Percentage.toNumber(1 / ship.dimensions.x)}%`;
-  view.style.height = `${Percentage.toNumber(1 / ship.dimensions.y)}%`;
+  const left = Percentage.toNumber(position.x) / ship.dimensions.x;
+  const right = Percentage.toNumber(position.y) / ship.dimensions.y;
+
+  const container = ship.view.appendChild(document.createElement("div"));
+  container.className = "block";
+  container.style.left = `${left}%`;
+  container.style.top = `${right}%`;
+  container.style.width = `${Percentage.toNumber(1 / ship.dimensions.x)}%`;
+  container.style.height = `${Percentage.toNumber(1 / ship.dimensions.y)}%`;
+
+  const main = document.createElement("div");
+  main.className = "main";
+  container.appendChild(main);
+
+  const damage = document.createElement("div");
+  damage.className = "damage";
+  container.appendChild(damage);
+
+  const heat = document.createElement("div");
+  heat.className = "heat";
+  container.appendChild(heat);
 
   return {
     type: Type.Hull,
@@ -42,7 +62,7 @@ export const init = ({
     position,
     health: Percentage.fromNumber(100),
     temperature: 0 as Physics.DegreesCelsius,
-    view
+    view: { container, damage, heat, main },
   };
 };
 
@@ -57,7 +77,7 @@ export const absolutePosition = (
 
   const offsetFromShipOrigin = {
     x: block.position.x * ship.scale - shipWidth / 2 + blockOffset,
-    y: block.position.y * ship.scale - shipHeight / 2 + blockOffset
+    y: block.position.y * ship.scale - shipHeight / 2 + blockOffset,
   };
 
   const angleFromShipOrigin = Math.atan2(
@@ -78,17 +98,17 @@ export const absolutePosition = (
     y:
       ship.physics.position.value.y +
       distanceFromShipOrigin *
-        Math.sin(ship.physics.angle.value + angleFromShipOrigin)
+        Math.sin(ship.physics.angle.value + angleFromShipOrigin),
   };
 };
 
 export const damage = (amount: Percentage.Percentage, block: Block) => {
   block.health -= amount;
 
-  // (block.view.children[0] as HTMLElement).style.opacity = `${block.health}`;
+  block.view.damage.style.opacity = `${Math.pow(1 - block.health, 0.2)}`;
 
   if (block.health < Percentage.fromNumber(25))
-    block.view.classList.add("destroyed");
+    block.view.container.classList.add("destroyed");
 };
 
 export const heat = (
@@ -98,21 +118,12 @@ export const heat = (
   block.temperature += temperatureChange;
   if (block.temperature <= -273.15) block.temperature = -273.15;
 
-  if (
-    ((block.temperature /
-      block.material.meltingPoint) as Percentage.Percentage) >=
-    Percentage.fromNumber(30)
-  )
+  const percentageToMelting = (block.temperature /
+    block.material.meltingPoint) as Percentage.Percentage;
+
+  if (percentageToMelting >= Percentage.fromNumber(30))
     damage(Percentage.fromNumber(0.05), block);
 
-  // const luminosity: Percentage.Percentage =
-  //   Percentage.fromNumber(100) -
-  //   Math.min(
-  //     Percentage.fromNumber(50),
-  //     block.temperature / block.material.meltingPoint
-  //   );
-
-  // block.view.style.background = `hsl(0, 100%, ${Percentage.toNumber(
-  //   luminosity
-  // )}%)`;
+  const opacity = Math.pow(Math.min(percentageToMelting, 1), 3);
+  block.view.heat.style.opacity = `${opacity}`;
 };

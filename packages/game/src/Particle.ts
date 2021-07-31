@@ -11,7 +11,7 @@ export interface Particle {
 
 export const enum Type {
   Light = "light",
-  Dummy = "dummy"
+  Dummy = "dummy",
 }
 
 export const explosion = (config: {
@@ -42,9 +42,9 @@ export const explosion = (config: {
               Angle.fromDegrees(360 * Math.random()),
               randomBetween(config.minRadius, config.maxRadius)
             ),
-            acceleration: Vector.init()
-          }
-        }
+            acceleration: Vector.init(),
+          },
+        },
       },
       config.colorStops
     );
@@ -71,20 +71,24 @@ export const init = (particle: Particle): HTMLElement => {
   view.style.top = `${particle.physics.position.value.y}px`;
 
   const shiftCenter = "translate(-50%, -50%)";
-  const rotation = (360 * Math.random()) as Angle.Degrees;
+
+  const diff = 50;
+  const rotation1 = randomBetween(0, 360) as Angle.Degrees;
+  const rotation2 = (rotation1 + randomBetween(-diff, diff)) as Angle.Degrees;
+  const rotation3 = (rotation2 + randomBetween(-diff, diff)) as Angle.Degrees;
 
   // `any` or it complains we don't include *all possible* CSS properties
   const keyframes: any = [
     {
       offset: 0,
       opacity: 1,
-      transform: `${shiftCenter} rotate(${rotation}deg) scale(0, 0)`
+      transform: `${shiftCenter} rotate(${rotation1}deg) scale(0, 0)`,
     },
 
     {
       offset: 0.05,
       opacity: 1,
-      transform: `${shiftCenter} rotate(${rotation + 90}deg) scale(1, 1.1)`
+      transform: `${shiftCenter} rotate(${rotation2}deg) scale(1, 1.1)`,
     },
 
     { offset: 0.15, opacity: 0.8 },
@@ -102,20 +106,20 @@ export const init = (particle: Particle): HTMLElement => {
       opacity: 0,
       transform: `
         ${shiftCenter}
-        rotate(${rotation + 180}deg)
+        rotate(${rotation3}deg)
 
         translate(
           ${particle.physics.position.velocity.x}px,
           ${particle.physics.position.velocity.y}px
         )
 
-        scale(0.5, 0.4)`
-    }
+        scale(0.5, 0.4)`,
+    },
   ];
 
   view.animate(keyframes, {
     duration: particle.duration,
-    fill: "forwards"
+    fill: "forwards",
   });
 
   setInterval(() => view.remove(), particle.duration);

@@ -20,11 +20,11 @@ type MetersPerBlock = number;
 export const init = (): Ship => {
   const scale = 15;
   const template = Template.large;
-  const rows = template.split("\n").filter(row => row !== "");
+  const rows = template.split("\n").filter((row) => row !== "");
 
   const dimensions = {
-    x: Math.max(...rows.map(row => row.length)),
-    y: rows.length
+    x: Math.max(...rows.map((row) => row.length)),
+    y: rows.length,
   };
 
   const view = document.body.appendChild(document.createElement("div"));
@@ -52,7 +52,7 @@ export const init = (): Ship => {
     blocks,
     dimensions,
     physics,
-    view
+    view,
   };
 };
 
@@ -77,7 +77,7 @@ export const stepBlocks = (_dt: number, ship: Ship) => {
       // bottom row
       { x: block.position.x - 1, y: block.position.y + 1 },
       { x: block.position.x, y: block.position.y + 1 },
-      { x: block.position.x + 1, y: block.position.y + 1 }
+      { x: block.position.x + 1, y: block.position.y + 1 },
     ]) {
       const neighbor = ship.blocks.get(Vector.toString(neighborPosition));
       if (!neighbor) {
@@ -96,7 +96,5 @@ export const step = (dt: number, state: State.State, ship: Ship) => {
 
   ship.view.style.left = `${state.ship.physics.position.value.x}px`;
   ship.view.style.top = `${state.ship.physics.position.value.y}px`;
-  ship.view.style.transform = `translate(-50%, -50%) rotate(${
-    state.ship.physics.angle.value
-  }rad)`;
+  ship.view.style.transform = `translate(-50%, -50%) rotate(${state.ship.physics.angle.value}rad)`;
 };

@@ -22,7 +22,7 @@ export const init = (nowMS: number): State => ({
   keyboard: Keyboard.init(),
 
   ship: Ship.init(),
-  projectiles: [Projectile.init()]
+  projectiles: [Projectile.init()],
 });
 
 export const step = (nowMS: number, state: State) => {

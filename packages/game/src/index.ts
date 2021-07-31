@@ -14,22 +14,22 @@ window.requestAnimationFrame(step);
 setInterval(() => {
   Ship.stepBlocks(state.nowMS - state.lastBlockUpdateMS, state.ship);
   state.lastBlockUpdateMS = state.nowMS;
-}, 300);
+}, 1000);
 
-document.addEventListener("keydown", event => {
+document.addEventListener("keydown", (event) => {
   Keyboard.down(event.keyCode, state.keyboard);
 });
 
-document.addEventListener("keyup", event => {
+document.addEventListener("keyup", (event) => {
   Keyboard.up(event.keyCode, state.keyboard);
 });
 
-document.addEventListener("mousemove", event => {
+document.addEventListener("mousemove", (event) => {
   state.mouse.x = event.clientX;
   state.mouse.y = event.clientY;
 });
 
-document.addEventListener("mousedown", event => {
+document.addEventListener("mousedown", (event) => {
   state.mouse.x = event.clientX;
   state.mouse.y = event.clientY;
   Ship.explosion(Math.pow(Math.random(), 10) * 10 + 2, state.mouse, state.ship);

@@ -2,7 +2,7 @@ import * as Angle from "./Angle";
 import * as Vector from "./Vector";
 
 export type Meter = number;
-export type TonsTnt = number;
+export type TonsTNT = number;
 export type DegreesCelsius = number;
 
 export interface Physics {
@@ -27,13 +27,13 @@ export const init = (config?: {
     angle: {
       value: Angle.init(),
       velocity: Angle.init(),
-      acceleration: Angle.init()
+      acceleration: Angle.init(),
     },
     position: {
       value: Vector.init(),
       velocity: Vector.init(),
-      acceleration: Vector.init()
-    }
+      acceleration: Vector.init(),
+    },
   };
 
   if (!config) return defaults;
@@ -45,7 +45,7 @@ export const init = (config?: {
           value: config.position.value || defaults.position.value,
           velocity: config.position.velocity || defaults.position.velocity,
           acceleration:
-            config.position.acceleration || defaults.position.acceleration
+            config.position.acceleration || defaults.position.acceleration,
         },
 
     angle: !config.angle
@@ -53,8 +53,9 @@ export const init = (config?: {
       : {
           value: config.angle.value || defaults.angle.value,
           velocity: config.angle.velocity || defaults.angle.velocity,
-          acceleration: config.angle.acceleration || defaults.angle.acceleration
-        }
+          acceleration:
+            config.angle.acceleration || defaults.angle.acceleration,
+        },
   };
 };
 
